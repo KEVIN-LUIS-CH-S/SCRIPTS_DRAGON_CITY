@@ -26,10 +26,57 @@ while(true) do
       menuk =-1
    end
   function changehabs()
-  	gg.clearResults()
+    gg.clearResults()
     gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
-    id_dragon="1011" ------------------------------AQUI -1-
-    id_second="1701" ------------------------------AQUI -2-
+
+    local respuesta = gg.choice({"Sí, ya lo tengo", "No, quiero detectarlo"}, nil, "¿Ya obtuviste el id secundario del dragón tierra?\n(Si no, puedes detectarlo automáticamente)")
+
+    local id_dragon = "1011"
+    local id_second = nil
+
+    if respuesta == 1 then
+        -- Usuario ya tiene el id_second, lo ingresa manualmente
+        local input = gg.prompt({"Ingresa el id secundario (id_second) de tu dragón tierra:"}, nil, {"number"})
+        if not input or not input[1] then
+            gg.toast("Cancelado")
+            return
+        end
+        id_second = tostring(input[1])
+    elseif respuesta == 2 then
+        -- Proceso automatizado para detectar id_second
+        gg.searchNumber(id_dragon..";0;-1::70", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        gg.refineNumber(id_dragon..";0::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        gg.refineNumber(id_dragon, gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        local results = gg.getResults(20)
+        if #results == 0 then
+            gg.alert("No se encontraron resultados. Intenta de nuevo.")
+            return
+        end
+
+        for i, res in ipairs(results) do
+            local original = res.value
+            gg.setValues({{address = res.address, flags = gg.TYPE_DWORD, value = 1015}})
+            gg.toast("¿Cambió tu dragón de apariencia? (Resultado "..i..")")
+            gg.sleep(2000)
+            local respuesta2 = gg.choice({"Sí, es mi dragón", "No, siguiente"}, nil, "¿Cambió tu dragón de apariencia?")
+            gg.setValues({{address = res.address, flags = gg.TYPE_DWORD, value = original}})
+            if respuesta2 == 1 then
+                local id_second_val = gg.getValues({{address = res.address + 4, flags = gg.TYPE_DWORD}})
+                id_second = tostring(id_second_val[1].value)
+                gg.alert("¡Listo! El id secundario (id_second) detectado es: "..id_second.."\n\nAnótalo en un bloc de notas para futuras ocasiones.")
+                break
+            end
+        end
+        if not id_second then
+            gg.alert("No se pudo detectar el id secundario automáticamente.")
+            return
+        end
+    else
+        gg.toast("Cancelado")
+        return
+    end
+
+    -- Continúa el proceso original usando id_dragon y id_second
     gg.searchNumber(id_dragon..";"..id_second..";0;-1::70", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
     gg.refineNumber(id_dragon..";"..id_second..";0::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
     gg.refineNumber(id_dragon..";"..id_second.."::5", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
