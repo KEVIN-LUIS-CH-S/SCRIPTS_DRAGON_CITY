@@ -152,18 +152,25 @@ while(true) do
   end
 
   function hab_lvl()
-  	nivelito={}
-    estrellitas={}
-    idsito={}
-    nivelito[1]="57" ------------------------------AQUI -3-
-    nivelito[2]="57" ------------------------------AQUI -4-
-    nivelito[3]="57" ------------------------------AQUI -5-
-    estrellitas[1]="4"  ------------------------------AQUI -6-
-    estrellitas[2]="4"  ------------------------------AQUI -7-
-    estrellitas[3]="4"  ------------------------------AQUI -8-
-    idsito[1]="2018" ------------------------------AQUI -9-
-    idsito[2]="1218" ------------------------------AQUI -10-
-    idsito[3]="1190" ------------------------------AQUI -11-
+    nivelito = {}
+    estrellitas = {}
+    idsito = {}
+
+    -- Solicitar datos al usuario para cada dragón rival
+    for i = 1, 3 do
+        local input = gg.prompt({
+            "Nivel del dragón rival #" .. i,
+            "Estrellas del dragón rival #" .. i,
+            "ID del dragón rival #" .. i
+        }, nil, {"number", "number", "number"})
+        if not input then
+            gg.toast("Cancelado")
+            return
+        end
+        nivelito[i] = input[1]
+        estrellitas[i] = input[2]
+        idsito[i] = input[3]
+    end
 
     gg.searchNumber(idsito[1]..";"..nivelito[1]..";"..estrellitas[1]..";1F;"..idsito[2]..";"..
       nivelito[2]..";"..estrellitas[2]..";1F;"..idsito[3]..";"..nivelito[3]..";"..estrellitas[3]..";1F::221", 
@@ -209,7 +216,7 @@ while(true) do
     valuepoint = gg.getValues(valuepoint)
     gg.addListItems(valuepoint)
     gg.clearResults()
-  end
+end
 
   function Fijar()
 	menukito = gg.choice({
