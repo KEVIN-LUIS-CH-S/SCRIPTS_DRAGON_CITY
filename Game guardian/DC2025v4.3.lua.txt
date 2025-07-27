@@ -1,0 +1,324 @@
+function principal()
+    menuPrincipal = gg.choice({
+        "💤Ocultar GameGuardian💤",
+        "🏟Batallas de Arena🏟",
+        "🐉Rescate del Dragon🐉",
+        "🎖Farmeo de Orbes🎖",
+        "🔄Cambiar Habilidades🔄",
+        "🏅Colección🏅",
+        "Salir📲"
+    }, nil, "Bienvenido jugador de DC 2025, disfrutad el script") or gg.setVisible(false)
+    if menuPrincipal == 1 then Ocultar() end
+    if menuPrincipal == 2 then batallaArena() end
+    if menuPrincipal == 3 then rescateDragon() end
+    if menuPrincipal == 4 then farmeoOrbes() end
+    if menuPrincipal == 5 then buscadorID() end
+    if menuPrincipal == 6 then Coleccion() end
+    if menuPrincipal == 7 then os.exit(gg.setVisible(true)) end
+    verificador = -1
+end
+
+function Ocultar()
+    gg.setVisible(false)
+    gg.toast("GameGuardian💤", true)
+end
+
+function batallaArena()
+    datos = gg.prompt({'Ingrese el nivel del dragón 1🔎','Ingrese el nivel del dragón 2🔎','Ingresa las estrellas del dragon 1✨','Ingresa las estrellas del dragon 2✨'}, {nil,nil,nil,nil}, {'number','number','number','number'})
+    if datos == nil then
+        return
+    end
+    gg.clearResults()
+    gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+    gg.searchNumber("1000~5600;"..datos[1]..";"..datos[3]..";1000~5600;"..datos[2]..";"..datos[4].."::133", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber("1000~5600;"..datos[1]..";"..datos[3]..";1000~5600;"..datos[2].."::101", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber("1000~5600;"..datos[1]..";"..datos[3]..";1000~5600::97", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber("1000~5600;"..datos[1]..";"..datos[3].."::37", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber("1000~5600;"..datos[1].."::5", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber("1000~5600", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    local t = gg.getResults(100, nil, nil, nil, nil, nil, nil, nil, nil)
+    for i, v in ipairs(t) do
+        gg.setValues({{address=t[i].address+0x00 , flags=4, value=1011}}) 
+        gg.setValues({{address=t[i].address+0x04 , flags=4, value=1}})    
+        gg.setValues({{address=t[i].address+0x44 , flags=4, value=1011}}) 
+        gg.setValues({{address=t[i].address+0x48 , flags=4, value=1}})    
+        gg.setValues({{address=t[i].address+0x88 , flags=4, value=1011}}) 
+        gg.setValues({{address=t[i].address+0x8C , flags=4, value=1}})           
+    end
+    gg.toast('✅Valores editados✅', true)
+    gg.sleep(1000)
+	os.exit(gg.setVisible(false))
+end
+
+function rescateDragon()
+    menubuscadorID = gg.choice({
+        "▶️Rescatar Dragon Legendario",
+        "▶️Rescatar Dragon Epico",
+        "▶️Rescatar Dragon Muy Raro",
+        "▶️Rescatar Dragon Raro",
+        "▶️Rescatar Dragon Comun"
+    }, nil, "Seleccione un la rareza para comenzar la búsqueda") or principal()
+    if menubuscadorID == 1 then lvl="30~70" dragon() end
+    if menubuscadorID == 2 then lvl="10~70" dragon() end
+    if menubuscadorID == 3 then lvl="10~70" dragon() end
+    if menubuscadorID == 4 then lvl="10~70" dragon() end
+    if menubuscadorID == 5 then lvl="10~70" dragon() end
+end
+
+function dragon()
+    gg.clearResults()
+    gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+    gg.searchNumber("1000~5600;-1;"..lvl..";0~5::17", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber("1000~5600;-1;"..lvl.."::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber("1000~5600;"..lvl.."::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.getResults(99999)
+    gg.editAll("1011;1", gg.TYPE_DWORD)
+    gg.toast('✅Valores editados✅', true)
+    gg.sleep(1000)
+	os.exit(gg.setVisible(false))
+end
+
+function farmeoOrbes()
+    id={}
+    nivel={}
+    estrellas={}
+    datos = gg.prompt({[1]='Ingrese el ID del dragón 1🔎', [2]='Ingrese el nivel del dragón 1🔎', [3]='Ingrese el nivel de estrellas dragón 1🔎', [4]='Ingrese el ID del dragón 2🔎', [5]='Ingrese el nivel del dragón 2🔎', [6]='Ingrese el nivel de estrellas dragón 2🔎',[7]='Ingrese el ID del dragón 3🔎', [8]='Ingrese el nivel del dragón 3🔎', [9]='Ingrese el nivel de estrellas dragón 3🔎'}, {[1]='', [2]='', [3]='', [4]='', [5]='', [6]='', [7]='', [8]='', [9]=''}, {[1]='number', [2]='number', [3]='number', [4]='number', [5]='number', [6]='number', [7]='number', [8]='number', [9]='number'})
+    if datos == nil then
+        return
+    end
+    id[1]=datos[1] 
+    id[2]=datos[4]
+    id[3]=datos[7]
+    nivel[1]=datos[2] 
+    nivel[2]=datos[5] 
+    nivel[3]=datos[8] 
+    estrellas[1]=datos[3]  
+    estrellas[2]=datos[6] 
+    estrellas[3]=datos[9] 
+    gg.clearResults()
+    gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+    gg.searchNumber(id[1]..";"..nivel[1]..";"..estrellas[1]..";1.5F;"..id[2]..";"..nivel[2]..";"..estrellas[2]..";1.5F;"..id[3]..";"..nivel[3]..";"..estrellas[3]..";1.5F::221", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id[1]..";"..nivel[1]..";"..estrellas[1]..";1.5F;"..id[2]..";"..nivel[2]..";"..estrellas[2]..";1.5F;"..id[3].."::161", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id[1]..";"..nivel[1]..";"..estrellas[1]..";1.5F;"..id[2].."::81", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id[1]..";"..nivel[1]..";"..estrellas[1].."::17", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id[1]..";"..nivel[1].."::9", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id[1],gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    local t = gg.getResults(1000, nil, nil, nil, nil, nil, nil, nil, nil)
+    for i, v in ipairs(t) do
+        gg.setValues({{address=t[i].address+0 , flags=4, value=1011}})
+        gg.setValues({{address=t[i].address+0x8 , flags=4, value=1}})
+        gg.setValues({{address=t[i].address+0x10 , flags=4, value=0}})
+        gg.setValues({{address=t[i].address+0x50 , flags=4, value=1011}})
+        gg.setValues({{address=t[i].address+0x58 , flags=4, value=1}})
+        gg.setValues({{address=t[i].address+0x60 , flags=4, value=0}})
+        gg.setValues({{address=t[i].address+0xA0 , flags=4, value=3011}}) 
+        gg.setValues({{address=t[i].address+0xA8 , flags=4, value=500}})
+        gg.setValues({{address=t[i].address+0xB0 , flags=4, value=0}})
+    end
+    gg.toast('✅Valores editados✅', true)
+    gg.sleep(1000)
+	os.exit(gg.setVisible(false))
+end
+
+function buscadorID()
+    menubuscadorID = gg.choice({
+        "▶️Buscar ID secundario",
+        "▶️Cambiar Habilidad",
+        "▶️Clonar dragón",
+        "▶️Subir nivel"
+    }, nil, "Seleccione una categoría de cambio de habilidad") or principal()
+    if menubuscadorID == 1 then buscarID() end
+    if menubuscadorID == 2 then cambiarHabilidades() end
+    if menubuscadorID == 3 then clonarDragon() end
+    if menubuscadorID == 4 then subirNivel() end
+end
+
+function buscarID()
+    datos = gg.prompt({[1] = 'Ingrese el ID del dragón🔎'}, {[1] = ''}, {[1] = 'number'})
+    if datos == nil then
+        return
+    end
+    gg.clearResults()
+    gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+    gg.searchNumber(datos[1]..";0;-1::70", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(datos[1]..";0;::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(datos[1], gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    
+    local t = gg.getResults(100)
+    local id_list = {}
+
+    for i, v in ipairs(t) do
+        id_second = gg.getValues({{address = t[i].address + 0x4, flags = 4}})[1].value
+        if id_second > 1 and id_second < 2000 then
+            table.insert(id_list, id_second)
+            gg.copyText(id_second)
+        end
+    end
+
+    if #id_list > 0 then
+        guardarEnTxt(id_list)
+        gg.toast('✅ Códigos guardados en Codigos.txt ✅', true)
+    else
+        gg.toast('❌ No se encontraron ID secundarios válidos ❌', true)
+    end
+end
+
+function guardarEnTxt(lista)
+    local path = "/storage/emulated/0/Download/Codigos.txt"
+    local file = io.open(path, "w")
+    if file then
+        file:write("Posibles códigos secundarios\n")
+        for _, id in ipairs(lista) do
+            file:write(id .. "\n")
+        end
+        file:close()
+    else
+        gg.toast("❌ Error al guardar el archivo ❌", true)
+    end
+end
+
+function cambiarHabilidades()
+    datos = gg.prompt({[1]='Ingrese el ID del dragón🔎',[2]='Ingrese el ID secundario del dragón🔎',[3]='Ingrese el ID el dragón que desea sus habilidades🔎'}, {[1]='',[2]='',[3]=''}, {[1]='number',[2]='number',[3]='number'})
+    if datos == nil then
+        return
+    end
+    id_dragon=datos[1]
+    id_second=datos[2]
+    id_habilidad=datos[3]
+    gg.clearResults()
+    gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+    gg.searchNumber(id_dragon..";"..id_second..";0;-1::70", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id_dragon..";"..id_second..";0::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id_dragon..";"..id_second.."::5", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id_dragon, gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    local t = gg.getResults(100, nil, nil, nil, nil, nil, nil, nil, nil)
+    select_x=0
+    while (select_x<=0) do
+        gg.setVisible(false)
+        munecambiarHabilidades = gg.choice({
+            "▶️Cambio tu dragón?  SI",
+            "▶️Cambio tu dragón?  NO"
+        }, nil, "Seleccione un la rareza para comenzar la búsqueda") or principal()
+        if munecambiarHabilidades == 1 then 
+            for i, v in ipairs(t) do
+                valor_hab5=gg.getValues({{address=t[i].address+0x30 , flags=4}})[1].value
+                valor_hab6=gg.getValues({{address=t[i].address+0x34 , flags=4}})[1].value
+                valor_hab7=gg.getValues({{address=t[i].address+0x38 , flags=4}})[1].value
+                valor_hab8=gg.getValues({{address=t[i].address+0x3C , flags=4}})[1].value  
+            end
+            gg.setValues({{address=t[1].address+0 , flags=4, value=id_dragon}})
+            select_x=1
+        end
+        if munecambiarHabilidades == 2 then 
+            for i, v in ipairs(t) do
+                gg.setValues({{address=t[i].address+0 , flags=4, value=id_habilidad}})
+                gg.sleep(3000) 
+            end
+        end
+    end
+    t = nil
+    gg.clearResults()
+    gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+    gg.searchNumber(id_dragon..";"..id_second..";0;-1::70", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id_dragon..";"..id_second..";0::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id_dragon..";"..id_second.."::5", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id_dragon, gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    local t = gg.getResults(100, nil, nil, nil, nil, nil, nil, nil, nil)
+    for i, v in ipairs(t) do
+        gg.setValues({{address=t[i].address+0x20 , flags=4, value=valor_hab5}})
+        gg.setValues({{address=t[i].address+0x24 , flags=4, value=valor_hab6}})
+        gg.setValues({{address=t[i].address+0x28 , flags=4, value=valor_hab7}})
+        gg.setValues({{address=t[i].address+0x2C , flags=4, value=valor_hab8}})   
+    end
+    gg.toast('✅Valores editados✅', true)
+    gg.sleep(1000)
+	os.exit(gg.setVisible(false))
+end
+
+function clonarDragon()
+    datos = gg.prompt({[1]='Ingrese el ID del dragón que cambiara🔎',[2]='Ingrese el ID secundario del dragón que cambiara🔎',[3]='Ingrese el ID el dragón que desea clonar🔎'}, {[1]='',[2]='',[3]=''}, {[1]='number',[2]='number',[3]='number'})
+    if datos == nil then
+        return
+    end
+    id_dragon=datos[1]
+    id_second=datos[2]
+    id_clon=datos[3]
+    gg.clearResults()
+    gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+    gg.searchNumber(id_dragon..";"..id_second..";0;-1::70", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id_dragon..";"..id_second..";0::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id_dragon..";"..id_second.."::5", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(id_dragon, gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    local t = gg.getResults(100, nil, nil, nil, nil, nil, nil, nil, nil)
+    gg.editAll(id_clon, gg.TYPE_DWORD)
+    gg.toast('✅Valores editados✅', true)
+    gg.sleep(1000)
+	os.exit(gg.setVisible(false))
+end
+
+function subirNivel()
+    datos = gg.prompt({'Ingrese el ID del dragón🔎','Ingrese el ID secundario del dragón🔎','Subir Nivel','Bajar Nivel'}, {nil,nil,nil,nil}, {'number','number','checkbox','checkbox'})
+    if datos == nil then
+        return
+    end
+    id_dragon=datos[1]
+    id_second=datos[2]
+    if datos[3] then
+        gg.clearResults()
+        gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+        gg.searchNumber(id_dragon..";"..id_second..";0;-1::70", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        gg.refineNumber(id_dragon..";"..id_second..";0::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        gg.refineNumber(id_dragon..";"..id_second.."::5", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        gg.refineNumber(id_dragon, gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        local t = gg.getResults(100, nil, nil, nil, nil, nil, nil, nil, nil)
+        for i, v in ipairs(t) do
+            valor_nivel=gg.getValues({{address=t[1].address+0x0C , flags=4}})[1].value
+            gg.setValues({{address=t[i].address+0x0C , flags=4, value=valor_nivel+40}})
+        end
+        gg.toast('✅Valores editados✅', true)
+        gg.sleep(1000)
+        os.exit(gg.setVisible(false))
+    end
+    if datos[4] then
+        gg.clearResults()
+        gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+        gg.searchNumber(id_dragon..";"..id_second..";0;-1::70", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        gg.refineNumber(id_dragon..";"..id_second..";0::10", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        gg.refineNumber(id_dragon..";"..id_second.."::5", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        gg.refineNumber(id_dragon, gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+        local t = gg.getResults(100, nil, nil, nil, nil, nil, nil, nil, nil)
+        for i, v in ipairs(t) do
+            valor_nivel=gg.getValues({{address=t[1].address+0x0C , flags=4}})[1].value
+            gg.setValues({{address=t[i].address+0x0C , flags=4, value=valor_nivel-40}})
+        end
+        gg.toast('✅Valores editados✅', true)
+        gg.sleep(1000)
+        os.exit(gg.setVisible(false))
+    end
+end
+
+function Coleccion()
+    datos = gg.prompt({'Ingrese el limite de la colección🔎','Ingrese la cantidad de tu colección🔎'}, {nil,nil}, {'number','number'})
+    if datos == nil then
+        return
+    end
+    gg.clearResults()
+    gg.setRanges(gg.REGION_C_ALLOC | gg.REGION_ANONYMOUS)
+    gg.searchNumber(datos[1]..";2;"..datos[2]..";"..datos[1]..":13", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    gg.refineNumber(datos[2], gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+    local t = gg.getResults(100, nil, nil, nil, nil, nil, nil, nil, nil)
+    gg.editAll("9999", gg.TYPE_DWORD)
+    gg.toast('✅Valores editados✅', true)
+    gg.sleep(1000)
+	os.exit(gg.setVisible(false))
+end
+
+while true do
+    if gg.isVisible(true) then
+        gg.setVisible(false)
+        verificador = 1
+        if verificador == 1 then
+            principal()
+        end
+    end
+end
